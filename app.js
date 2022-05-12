@@ -30,6 +30,27 @@ app.post('/users/add', function addUser(req, res) {
     res.json(null)
 })
 
+app.post('/users/login', function login(req,res) {
+    const username = req.body.username
+    const password = req.body.password
+    connection.query ("SELECT * from Users WHERE Username = ? AND Password =? " ,[username, password],
+                        function(err, results) {
+                            if (err) throw err
+                            if (results.length <= 0) {
+                                console.log("Incorrect username or password")
+                                // can route back to the log in page here
+                            }
+                            else { 
+                                console.log ("Logged in successfully")
+                                // can route here to the next page
+                            }
+                           
+                        })
+    res.json(null)
+   
+}
+)
+
 app.listen(port, function() {
     console.log(`Listening on port ${port}...`)
 })
