@@ -1,11 +1,15 @@
 import express from "express"
 import mysql from "mysql"
 
-const app = express()
-const port = 4000
+
+const app = express();
+const port = 4000;
+
+
 
 app.use(express.json());
 app.use(express.urlencoded());
+
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -14,7 +18,13 @@ const connection = mysql.createConnection({
     password: 'root',
 })
 
-app.post('/users/add', function addUser(req, res) {
+
+app.get ("/post", function connectioncheck (req, res) {
+    console.log("Connected to the front end")
+
+})
+
+app.post('/signup', function addUser(req, res) {
     const name = req.body.name
     const surname = req.body.surname
     const username = req.body.username
@@ -30,14 +40,14 @@ app.post('/users/add', function addUser(req, res) {
     res.json(null)
 })
 
-app.post('/users/login', function login(req,res) {
-    const username = req.body.username
+app.post('/login', function login(req,res) {
+    const email = req.body.email
     const password = req.body.password
-    connection.query ("SELECT * from Users WHERE Username = ? AND Password =? " ,[username, password],
+    connection.query ("SELECT * from Users WHERE Email = ? AND Password =? " ,[email, password],
                         function(err, results) {
                             if (err) throw err
                             if (results.length <= 0) {
-                                console.log("Incorrect username or password")
+                                console.log("Incorrect email or password")
                                 // can route back to the log in page here
                             }
                             else { 
