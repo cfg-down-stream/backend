@@ -32,12 +32,29 @@ app.post('/signup', function addUser(req, res) {
     const email = req.body.email
     const date_of_birth = req.body.date_of_birth
     const country = req.body.country
-    connection.query("INSERT INTO Users (Name, Surname, Username, Password, Email, Date_of_birth, Country) \
-                        VALUES (?, ?, ?, ?, ?, ?, ?)", [name, surname, username, password, email, date_of_birth, country],
-                        function(err, results) {
-                            if (err) throw err
-                        })
-    res.json(null)
+    //first check to see if the username is already in use 
+    connection.query("SELECT * FROM Users WHERE Username = ?", [username],
+                    function(err, results) {
+                        if (err) throw err
+                        if(results.length >0) {
+                            res.send({message:"Username already exists"})
+                        }
+                    })
+                        else{
+                            connection.query(
+                                "INSERT INTO Users (Name, Surname, Username, Password, Email, Date_of_birth, Country) \
+                                                VALUES (?, ?, ?, ?, ?, ?, ?)", [name, surname, username, password, email, date_of_birth, country],
+                                                function(err,results) {
+                                                    if (err) throw err
+                                                    res.send(results)
+                                                }
+                    
+                                                    
+
+                            )
+                        }
+                    
+res.json(null)
 })
 
 app.post('/login', function login(req,res) {
@@ -47,16 +64,17 @@ app.post('/login', function login(req,res) {
                         function(err, results) {
                             if (err) throw err
                             if (results.length <= 0) {
-                                console.log("Incorrect email or password")
-                                // can route back to the log in page here
+                                res.send({message: "Incorrect email or password"})
+                                // converts the message into an object that we can display on the frontend
+                                //can route back to the log in page here
                             }
                             else { 
-                                console.log ("Logged in successfully")
+                                res.send (results)
                                 // can route here to the next page
                             }
                            
                         })
-    res.json(null)
+    
    
 }
 )
