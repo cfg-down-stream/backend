@@ -8,7 +8,7 @@ const port = 4000;
 
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded());
 
 
 const connection = mysql.createConnection({
@@ -32,32 +32,30 @@ app.post('/signup', function addUser(req, res) {
     const email = req.body.email
     const date_of_birth = req.body.date_of_birth
     const country = req.body.country
-    //first check to see if the email is already in use 
-    connection.query("SELECT * FROM Users WHERE Email = ?", [email],
-                    function(err, results) {
-                        if (err) throw err
-                        if(results.length >0) {
-                            return res.send({message:"Email already in use!"})
-                        }
-            // if email not in use, create new user
-                        else{
-                            connection.query(
-                                "INSERT INTO Users (Name, Surname, Username, Password, Email, Date_of_birth, Country) \
-                                                VALUES (?, ?, ?, ?, ?, ?, ?)", [name, surname, username, password, email, date_of_birth, country],
-                                                function(err,results) {
-                                                    if (err) throw err
-                                                    res.send(results)
-                                                }
+    connection.query("INSERT INTO Users (Name, Surname, Username, Password, Email, Date_of_birth, Country) \
+                    VALUES (?, ?, ?, ?, ?, ?, ?)", [name, surname, username, password, email, date_of_birth, country],
+                    function(err,results) {
+                    if (err) throw err
+                    res.send(results)
+                    }
                     
                                                     
 
-                            )
-                        }
+                    )
+                })
                     
-res.json(null)
-})
-})
 
+
+
+   //first check to see if the username is already in use 
+    // connection.query("SELECT * FROM Users WHERE Username = ?", [username],
+    //                 function(err, results) {
+    //                     if (err) throw err
+    //                     if(results.length >0) {
+    //                         res.send({message:"Username already exists"})
+    //                     }
+    //                 })
+    //                     else{
 app.post('/login', function login(req,res) {
     const email = req.body.email
     const password = req.body.password
@@ -65,12 +63,12 @@ app.post('/login', function login(req,res) {
                         function(err, results) {
                             if (err) throw err
                             if (results.length <= 0) {
-                                return res.send({message: "Incorrect email or password"})
+                                res.send({message: "Incorrect email or password"})
                                 // converts the message into an object that we can display on the frontend
                                 //can route back to the log in page here
                             }
                             else { 
-                                return res.send (results)
+                                res.send (results)
                                 // can route here to the next page
                             }
                            
