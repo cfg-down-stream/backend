@@ -24,6 +24,7 @@ app.get ("/post", function connectioncheck (req, res) {
 
 })
 
+//add a new user
 app.post('/signup', function addUser(req, res) {
     const name = req.body.name
     const surname = req.body.surname
@@ -39,6 +40,7 @@ app.post('/signup', function addUser(req, res) {
                         if(results.length >0) {
                             return res.send({message:"Email already in use"})
                         }
+                        //if username is not taken adds new user to database
                         else{
                                 connection.query("INSERT INTO Users (Name, Surname, Username, Password, Email, Date_of_birth, Country) \
                                                     VALUES (?, ?, ?, ?, ?, ?, ?)", [name, surname, username, password, email, date_of_birth, country],
@@ -57,20 +59,22 @@ app.post('/signup', function addUser(req, res) {
 
 
 
+//logs in user
 app.post('/login', function login(req,res) {
     const email = req.body.email
     const password = req.body.password
     connection.query ("SELECT * from Users WHERE Email = ? AND Password =? " ,[email, password],
                         function(err, results) {
                             if (err) throw err
+                            //checks to see if username and password are in the database
                             if (results.length <= 0) {
                                 return res.send({message: "Incorrect email or password"})
                                 // converts the message into an object that we can display on the frontend
-                                //can route back to the log in page here
+                               
                             }
                             else { 
                                 res.send (results)
-                                // can route here to the next page
+                                
                             }
                            
                         })
@@ -78,6 +82,22 @@ app.post('/login', function login(req,res) {
    
 }
 )
+
+// displays Name and favourites
+app.get ('/profile', function profile(req,res) {
+    connection.query ("SELECT  Name, Title FROM Users INNER JOIN Favourites on User_id = id WHERE User_id = 1",
+                        function(err,results) {
+                            if (err) throw err;
+                            else{
+                                return res.send(results)
+                            }
+                        }
+    )
+}
+)
+
+
+
 
 app.listen(port, function() {
     console.log(`Listening on port ${port}...`)
