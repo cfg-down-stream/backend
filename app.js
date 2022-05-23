@@ -75,7 +75,7 @@ app.post("/login", function login(req, res) {
 // displays Name and favourites
 app.get("/profile", function profile(req, res) {
   connection.query(
-    "SELECT Name, Title, Title_id FROM Users INNER JOIN Favourites on User_id = id WHERE User_id = 1;",
+    "SELECT Name, Title_id FROM Users INNER JOIN Favourites on User_id = id WHERE User_id = 1;",
     function (err, results) {
       if (err) throw err;
       else {
@@ -93,6 +93,55 @@ app.get("/search", function search(req, res) {
       if (err) throw err;
       else {
         return res.send(results);
+      }
+    }
+  );
+});
+
+// Adds title to favourites on heart icon click
+app.post("/results", function addToFavourites(req, res) {
+  const user_id = req.body.user_id;
+  const title_id = req.body.title_id;
+  connection.query(
+    "SELECT * FROM Favourites WHERE Title_id = ?",
+    [title_id],
+    function (err, results) {
+      if (err) throw err;
+      if (results.length > 0) {
+        return res.send({ message: "Alrady added" });
+      } else {
+        connection.query(
+          "INSERT INTO Favourites (User_id, Title_id) \
+          VALUES(?, ?)",
+          [user_id, title_id],
+          function (err, results) {
+            if (err) throw err;
+            res.send(results);
+          }
+        );
+      }
+    }
+  );
+});
+
+// Supposed to remove favourites on heart icon click
+app.delete("/results", function deleteFromFavourites(req, res) {
+  const title_id = req.body.title_id;
+  connection.query(
+    "SELECT * FROM Favourites WHERE Title_id = ?",
+    [title_id],
+    function (err, results) {
+      if (err) throw err;
+      if (results.length < 1) {
+        return res.send({ message: "Doesn't exist" });
+      } else {
+        connection.query(
+          "DELETE FROM Favourites WHERE Title_id = ?",
+          [title_id],
+          function (err, results) {
+            if (err) throw err;
+          }
+        );
       }
     }
   );
