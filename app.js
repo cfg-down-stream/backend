@@ -85,6 +85,19 @@ app.get("/profile", function profile(req, res) {
   );
 });
 
+// Displays username on Search page (via Platform.js)
+app.get("/search", function search(req, res) {
+  connection.query(
+    "SELECT Name, Username FROM Users;",
+    function (err, results) {
+      if (err) throw err;
+      else {
+        return res.send(results);
+      }
+    }
+  );
+});
+
 app.listen(port, function () {
   console.log(`Listening on port ${port}...`);
 });
