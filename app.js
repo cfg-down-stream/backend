@@ -36,7 +36,7 @@ app.post("/signup", function addUser(req, res) {
       if (results.length > 0) {
         return res.send({ message: "Email already in use" });
       }
-      //if username is not taken adds new user to database
+      //if email is not taken adds new user to database
       else {
         connection.query(
           "INSERT INTO Users (Name, Surname, Username, Password, Email, Date_of_birth, Country) \
@@ -61,7 +61,7 @@ app.post("/login", function login(req, res) {
     [email, password],
     function (err, results) {
       if (err) throw err;
-      //checks to see if username and password are in the database
+      //checks to see if email and password are in the database
       if (results.length <= 0) {
         return res.send({ message: "Incorrect email or password" });
         // converts the message into an object that we can display on the frontend
@@ -72,7 +72,7 @@ app.post("/login", function login(req, res) {
   );
 });
 
-// displays Name and favourites
+// displays Favourites
 app.get("/profile/:id", function profile(req, res) {
   connection.query(
     "SELECT Title_id FROM Favourites WHERE User_id = ?;",
