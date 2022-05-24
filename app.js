@@ -57,7 +57,7 @@ app.post("/login", function login(req, res) {
   const email = req.body.email;
   const password = req.body.password;
   connection.query(
-    "SELECT * from Users WHERE Email = ? AND Password =? ",
+    "SELECT id, Name from Users WHERE Email = ? AND Password =? ",
     [email, password],
     function (err, results) {
       if (err) throw err;
@@ -73,9 +73,10 @@ app.post("/login", function login(req, res) {
 });
 
 // displays Name and favourites
-app.get("/profile", function profile(req, res) {
+app.get("/profile/:id", function profile(req, res) {
   connection.query(
-    "SELECT Name, Title_id FROM Users INNER JOIN Favourites on User_id = id WHERE User_id = 1;",
+    "SELECT Title_id FROM Favourites WHERE User_id = ?;",
+    [req.params.id],
     function (err, results) {
       if (err) throw err;
       else {
@@ -127,6 +128,8 @@ app.post("/results", function addToFavourites(req, res) {
 // Supposed to remove favourites on heart icon click
 app.delete("/results", function deleteFromFavourites(req, res) {
   const title_id = req.body.title_id;
+  const user_id = req.body.user_id;
+  console.log(req);
   connection.query(
     "SELECT * FROM Favourites WHERE Title_id = ?",
     [title_id],
@@ -136,8 +139,8 @@ app.delete("/results", function deleteFromFavourites(req, res) {
         return res.send({ message: "Doesn't exist" });
       } else {
         connection.query(
-          "DELETE FROM Favourites WHERE Title_id = ?",
-          [title_id],
+          "DELETE FROM Favourites WHERE Title_id = ? AND User_id = ?",
+          [title_id, user_id],
           function (err, results) {
             if (err) throw err;
           }
