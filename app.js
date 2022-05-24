@@ -86,30 +86,17 @@ app.get("/profile/:id", function profile(req, res) {
   );
 });
 
-// Displays username on Search page (via Platform.js)
-app.get("/search", function search(req, res) {
-  connection.query(
-    "SELECT Name, Username FROM Users;",
-    function (err, results) {
-      if (err) throw err;
-      else {
-        return res.send(results);
-      }
-    }
-  );
-});
-
 // Adds title to favourites on heart icon click
 app.post("/results", function addToFavourites(req, res) {
   const user_id = req.body.user_id;
   const title_id = req.body.title_id;
   connection.query(
-    "SELECT * FROM Favourites WHERE Title_id = ?",
-    [title_id],
+    "SELECT * FROM Favourites WHERE Title_id = ? AND id = ?",
+    [title_id, user_id],
     function (err, results) {
       if (err) throw err;
       if (results.length > 0) {
-        return res.send({ message: "Alrady added" });
+        return res.send({ message: "Already added" });
       } else {
         connection.query(
           "INSERT INTO Favourites (User_id, Title_id) \
@@ -131,8 +118,8 @@ app.delete("/results", function deleteFromFavourites(req, res) {
   const user_id = req.body.user_id;
   console.log(req);
   connection.query(
-    "SELECT * FROM Favourites WHERE Title_id = ?",
-    [title_id],
+    "SELECT * FROM Favourites WHERE Title_id = ? AND id = ?",
+    [title_id, user_id],
     function (err, results) {
       if (err) throw err;
       if (results.length < 1) {
