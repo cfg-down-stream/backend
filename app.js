@@ -27,7 +27,7 @@ app.post("/signup", function addUser(req, res) {
   const email = req.body.email;
   const date_of_birth = req.body.date_of_birth;
   const country = req.body.country;
-  //first check to see if the username is already in use
+  //first check to see if the email is already in use
   connection.query(
     "SELECT * FROM Users WHERE Email = ?",
     [email],
@@ -80,6 +80,7 @@ app.get("/profile/:id", function profile(req, res) {
     function (err, results) {
       if (err) throw err;
       else {
+        console.log(results)
         return res.send(results);
       }
     }
