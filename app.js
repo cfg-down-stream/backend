@@ -88,55 +88,55 @@ app.get("/profile/:id", function profile(req, res) {
 });
 
 // Adds title to favourites on heart icon click
-app.post("/results", function addToFavourites(req, res) {
-  const user_id = req.body.user_id;
-  const title_id = req.body.title_id;
-  connection.query(
-    "SELECT * FROM Favourites WHERE Title_id = ? AND id = ?",
-    [title_id, user_id],
-    function (err, results) {
-      if (err) throw err;
-      if (results.length > 0) {
-        return res.send({ message: "Already added" });
-      } else {
-        connection.query(
-          "INSERT INTO Favourites (User_id, Title_id) \
-          VALUES(?, ?)",
-          [user_id, title_id],
-          function (err, results) {
-            if (err) throw err;
-            res.send(results);
-          }
-        );
-      }
-    }
-  );
-});
+// app.post("/results", function addToFavourites(req, res) {
+//   const user_id = req.body.user_id;
+//   const title_id = req.body.title_id;
+//   connection.query(
+//     "SELECT * FROM Favourites WHERE Title_id = ? AND id = ?",
+//     [title_id, user_id],
+//     function (err, results) {
+//       if (err) throw err;
+//       if (results.length > 0) {
+//         return res.send({ message: "Already added" });
+//       } else {
+//         connection.query(
+//           "INSERT INTO Favourites (User_id, Title_id) \
+//           VALUES(?, ?)",
+//           [user_id, title_id],
+//           function (err, results) {
+//             if (err) throw err;
+//             res.send(results);
+//           }
+//         );
+//       }
+//     }
+//   );
+// });
 
 // Supposed to remove favourites on heart icon click
-app.delete("/results", function deleteFromFavourites(req, res) {
-  const title_id = req.body.title_id;
-  const user_id = req.body.user_id;
-  console.log(req);
-  connection.query(
-    "SELECT * FROM Favourites WHERE Title_id = ? AND id = ?",
-    [title_id, user_id],
-    function (err, results) {
-      if (err) throw err;
-      if (results.length < 1) {
-        return res.send({ message: "Doesn't exist" });
-      } else {
-        connection.query(
-          "DELETE FROM Favourites WHERE Title_id = ? AND User_id = ?",
-          [title_id, user_id],
-          function (err, results) {
-            if (err) throw err;
-          }
-        );
-      }
-    }
-  );
-});
+// app.delete("/results", function deleteFromFavourites(req, res) {
+//   const title_id = req.body.title_id;
+//   const user_id = req.body.user_id;
+//   console.log(req);
+//   connection.query(
+//     "SELECT * FROM Favourites WHERE Title_id = ? AND id = ?",
+//     [title_id, user_id],
+//     function (err, results) {
+//       if (err) throw err;
+//       if (results.length < 1) {
+//         return res.send({ message: "Doesn't exist" });
+//       } else {
+//         connection.query(
+//           "DELETE FROM Favourites WHERE Title_id = ? AND User_id = ?",
+//           [title_id, user_id],
+//           function (err, results) {
+//             if (err) throw err;
+//           }
+//         );
+//       }
+//     }
+//   );
+// });
 
 app.listen(port, function () {
   console.log(`Listening on port ${port}...`);
